@@ -4,6 +4,7 @@
 LOG_OUTPUT=true  # Set to false to disable log output
 LOG_LOOP_OUTPUT=true  # Set to false to disable loop log output
 LOG_FILE="/root/nordvpn_monitor.txt"
+TOKEN_FILE="/root/nordtoken.txt"
 LOOP_SLEEP=60
 LOGIN_ATTEMPT_LIMIT=3
 CHANGEHOST_INTERVAL=300  # 300 minutes = 5 hours
@@ -22,11 +23,22 @@ log() {
     fi
 }
 
+# Read token from file
+read_token() {
+    if [ -f "$TOKEN_FILE" ]; then
+        token=$(<"$TOKEN_FILE")
+        echo "$token"
+    else
+        log "Error: Token file not found."
+        exit 1
+    fi
+}
+
 # Function to execute NordVPN command and log output
 execute_nordvpn() {
     local command="$1"
     local output
-    output=$(eval "nordvpn $command") || { log "Error executing nordvpn $command"; return 1; }
+	output=$(eval "nordvpn $command") || { log "Error executing nordvpn $command"; return 1; }
     log "$output"
 }
 
@@ -46,7 +58,9 @@ check_login() {
 
 # Function to log in to NordVPN
 login() {
-    execute_nordvpn "login --token e9f2ab6f4750829d98b52126ccbf5eb2e51b6140e349107214447be9f5b182a8"
+    local token
+    token=$(read_token)
+    execute_nordvpn "login --token $token"
 }
 
 # Function to log out of NordVPN
