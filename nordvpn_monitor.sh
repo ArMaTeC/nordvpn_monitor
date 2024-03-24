@@ -23,22 +23,11 @@ log() {
     fi
 }
 
-# Read token from file
-read_token() {
-    if [ -f "$TOKEN_FILE" ]; then
-        token=$(<"$TOKEN_FILE")
-        echo "$token"
-    else
-        log "Error: Token file not found."
-        exit 1
-    fi
-}
-
 # Function to execute NordVPN command and log output
 execute_nordvpn() {
     local command="$1"
     local output
-	output=$(eval "nordvpn $command") || { log "Error executing nordvpn $command"; return 1; }
+    output=$(nordvpn "$command") || { log "Error executing nordvpn $command"; return 1; }
     log "$output"
 }
 
@@ -59,8 +48,13 @@ check_login() {
 # Function to log in to NordVPN
 login() {
     local token
-    token=$(read_token)
-    execute_nordvpn "login --token $token"
+    if [ -f "$TOKEN_FILE" ]; then
+        token=$(<"$TOKEN_FILE")
+        execute_nordvpn "login --token $token"
+    else
+        log "Error: Token file not found."
+        exit 1
+    fi
 }
 
 # Function to log out of NordVPN
