@@ -2,12 +2,12 @@
 
 # Constants
 LOG_OUTPUT=true  # Set to false to disable log output
-LOG_LOOP_OUTPUT=false  # Set to false to disable loop log output
+LOG_LOOP_OUTPUT=true  # Set to false to disable loop log output
 LOG_FILE="/root/nordvpn_monitor.txt"
 LOOP_SLEEP=60
 LOGIN_ATTEMPT_LIMIT=3
 CHANGEHOST_INTERVAL=300  # 300 minutes = 5 hours
-TOKEN=eff42ab6f4750829d98b52126ccbf5eb2e51b6140e349107214447be9f5b18255 #obtain from NordVPN website
+
 
 # Function to log output to screen and file if it's different from the previous log
 last_log=""
@@ -16,7 +16,7 @@ log() {
     if [ "$message" != "$last_log" ]; then
 		echo "$message"
 		if [ "$LOG_OUTPUT" = true ]; then
-			echo "$(date +"%Y-%m-%d %T") $message" >> "$LOG_FILE"
+			echo "==$(date +"%Y-%m-%d %T")== $message" >> "$LOG_FILE"
 		fi
 		last_log="$message"
 	fi
@@ -46,7 +46,7 @@ check_login() {
 
 # Function to log in to NordVPN
 login() {
-    execute_nordvpn "login --token $TOKEN"
+    execute_nordvpn "login --token e9f2ab6f4750829d98b52126ccbf5eb2e51b6140e349107214447be9f5b182a8"
 }
 
 # Function to log out of NordVPN
