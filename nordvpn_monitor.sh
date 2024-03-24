@@ -27,7 +27,7 @@ log() {
 execute_nordvpn() {
     local command="$1"
     local output
-    output=$(nordvpn "$command") || { log "Error executing nordvpn $command"; return 1; }
+	output=$(eval "nordvpn $command") || { log "Error executing nordvpn $command"; return 1; }
     log "$output"
 }
 
