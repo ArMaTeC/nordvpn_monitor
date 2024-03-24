@@ -8,6 +8,7 @@ TOKEN_FILE="/root/nordtoken.txt"
 LOOP_SLEEP=60
 LOGIN_ATTEMPT_LIMIT=3
 CHANGEHOST_INTERVAL=300      # 300 minutes = 5 hours
+MAX_LOG_SIZE=$((1024*1024*1024)) # 1GB in bytes
 
 # Function to log output to screen and file if it's different from the previous log
 last_log=""
@@ -18,6 +19,11 @@ log() {
         echo "$timestamp - $message"
         if [ "$LOG_OUTPUT" = true ]; then
             echo "== $timestamp == $message" >> "$LOG_FILE" || echo "Failed to write to log file."
+            # Check log file size and truncate if over 1GB
+            if [ -f "$LOG_FILE" ] && [ $(stat -c %s "$LOG_FILE") -gt $MAX_LOG_SIZE ]; then
+                truncate -s 0 "$LOG_FILE" || echo "Failed to truncate log file."
+                log "Log file truncated as it exceeded 1GB."
+            fi
         fi
         last_log="$message"
     fi
