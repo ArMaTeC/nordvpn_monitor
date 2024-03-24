@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Constants
-LOG_OUTPUT=true  # Set to false to disable log output
-LOG_LOOP_OUTPUT=true  # Set to false to disable loop log output
+LOG_OUTPUT=true              # Set to false to disable log output
+LOG_LOOP_OUTPUT=true         # Set to false to disable loop log output
 LOG_FILE="/root/nordvpn_monitor.txt"
 TOKEN_FILE="/root/nordtoken.txt"
 LOOP_SLEEP=60
 LOGIN_ATTEMPT_LIMIT=3
-CHANGEHOST_INTERVAL=300  # 300 minutes = 5 hours
+CHANGEHOST_INTERVAL=300      # 300 minutes = 5 hours
 
 # Function to log output to screen and file if it's different from the previous log
 last_log=""
@@ -17,7 +17,7 @@ log() {
     if [ "$message" != "$last_log" ]; then
         echo "$timestamp - $message"
         if [ "$LOG_OUTPUT" = true ]; then
-            echo "== $timestamp == $message" >> "$LOG_FILE"
+            echo "== $timestamp == $message" >> "$LOG_FILE" || echo "Failed to write to log file."
         fi
         last_log="$message"
     fi
@@ -69,6 +69,7 @@ reconnect() {
 
 # Function to check flaresolverr service and restart if failed
 flaresolverrcheck() {
+    local output
     # Run the curl command and capture its output
     output=$(curl -s -L -X POST 'http://localhost:8191/v1' \
         -H 'Content-Type: application/json' \
